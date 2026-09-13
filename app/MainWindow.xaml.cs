@@ -780,26 +780,38 @@ public sealed partial class MainWindow : Window
 
         var titleBounds = AppTitleBar.TransformToVisual(null)
             .TransformBounds(new Windows.Foundation.Rect(0, 0, AppTitleBar.ActualWidth, AppTitleBar.ActualHeight));
-        var buttonBounds = ExportButton.TransformToVisual(null)
-            .TransformBounds(new Windows.Foundation.Rect(0, 0, ExportButton.ActualWidth, ExportButton.ActualHeight));
 
-        // Keep the Export button clear of the system caption buttons.
+        // Keep the title-bar controls clear of the system caption buttons.
         RightPaddingColumn.Width = new GridLength(AppWindow.TitleBar.RightInset / scale);
 
         int left = (int)Math.Round(titleBounds.X * scale);
         int top = (int)Math.Round(titleBounds.Y * scale);
         int height = (int)Math.Round(titleBounds.Height * scale);
-        int buttonLeft = (int)Math.Round(buttonBounds.X * scale);
-        int buttonRight = (int)Math.Round((buttonBounds.X + buttonBounds.Width) * scale);
         int dragEnd = (int)Math.Round((titleBounds.X + titleBounds.Width) * scale) - AppWindow.TitleBar.RightInset;
 
-        var regions = new List<Windows.Graphics.RectInt32>
+        // Interactive zones (update check panel, export button) are excluded
+        // from the drag region; everything around them stays draggable.
+        var zones = new FrameworkElement[] { TitleBarUpdatePanel, ExportButton }
+            .Select(el => el.TransformToVisual(null)
+                .TransformBounds(new Windows.Foundation.Rect(0, 0, el.ActualWidth, el.ActualHeight)))
+            .Select(b => (Left: (int)Math.Round(b.X * scale), Right: (int)Math.Round((b.X + b.Width) * scale)))
+            .Where(z => z.Right > z.Left)
+            .OrderBy(z => z.Left)
+            .ToList();
+
+        var regions = new List<Windows.Graphics.RectInt32>();
+        int cursor = left;
+        foreach (var zone in zones)
         {
-            new(left, top, buttonLeft - left, height),
-        };
-        if (dragEnd > buttonRight)
+            if (zone.Left > cursor)
+            {
+                regions.Add(new Windows.Graphics.RectInt32(cursor, top, zone.Left - cursor, height));
+            }
+            cursor = Math.Max(cursor, zone.Right);
+        }
+        if (dragEnd > cursor)
         {
-            regions.Add(new Windows.Graphics.RectInt32(buttonRight, top, dragEnd - buttonRight, height));
+            regions.Add(new Windows.Graphics.RectInt32(cursor, top, dragEnd - cursor, height));
         }
 
         AppWindow.TitleBar.SetDragRectangles(regions.ToArray());

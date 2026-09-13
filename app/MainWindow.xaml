@@ -20,6 +20,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal"
@@ -42,12 +43,24 @@
                            VerticalAlignment="Center"
                            Margin="12,3,0,0"/>
             </StackPanel>
+            <StackPanel x:Name="TitleBarUpdatePanel"
+                        Orientation="Horizontal"
+                        Grid.Column="2"
+                        Spacing="12"
+                        VerticalAlignment="Center">
+                <TextBlock x:Name="VersionLabel"
+                           VerticalAlignment="Center"
+                           Opacity="0.6"/>
+                <Button x:Name="CheckUpdateButton"
+                        Content="Check for updates"
+                        Click="OnCheckForUpdates"/>
+            </StackPanel>
             <Button x:Name="ExportButton"
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Content="Export .docx"
                     Style="{StaticResource AccentButtonStyle}"
                     VerticalAlignment="Center"
-                    Margin="0,0,16,0"
+                    Margin="12,0,16,0"
                     Click="OnExport"/>
         </Grid>
 
@@ -86,15 +99,6 @@
                                Text="Shared details"/>
                     <Grid x:Name="SharedGrid" ColumnSpacing="24" RowSpacing="10"/>
                     <Grid x:Name="LanguageGrid" ColumnSpacing="24" RowSpacing="24"/>
-
-                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,0">
-                        <TextBlock x:Name="VersionLabel"
-                                   VerticalAlignment="Center"
-                                   Opacity="0.6"/>
-                        <Button x:Name="CheckUpdateButton"
-                                Content="Check for updates"
-                                Click="OnCheckForUpdates"/>
-                    </StackPanel>
                 </StackPanel>
 
                 <!-- Right: live preview of the result -->
