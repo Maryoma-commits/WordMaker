@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="WordMaker.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid" SizeChanged="OnRootSizeChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar: transparent so the Mica backdrop shows through.
+             The drag region is set in code-behind so the Export button stays clickable. -->
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="48">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="16,0,0,0">
+                <Image x:Name="TitleBarIcon"
+                       Width="20"
+                       Height="20"
+                       Margin="0,0,10,0"
+                       VerticalAlignment="Center"/>
+                <TextBlock Text="Contract Maker"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="Designed by Hassan Al Helal"
+                           FontFamily="Segoe UI Variable Display, Segoe UI"
+                           FontWeight="SemiLight"
+                           FontStyle="Italic"
+                           FontSize="12"
+                           Foreground="{ThemeResource LogoAccentBrush}"
+                           VerticalAlignment="Center"
+                           Margin="12,3,0,0"/>
+            </StackPanel>
+            <Button x:Name="ExportButton"
+                    Grid.Column="2"
+                    Content="Export .docx"
+                    Style="{StaticResource AccentButtonStyle}"
+                    VerticalAlignment="Center"
+                    Margin="0,0,16,0"
+                    Click="OnExport"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1">
+            <Grid x:Name="ContentGrid" Margin="28,12,28,24" ColumnSpacing="32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Left: input form -->
+                <StackPanel x:Name="FormPanel" Grid.Column="0" Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <ComboBox x:Name="CompanySelector"
+                                  PlaceholderText="Load a saved company…"
+                                  HorizontalAlignment="Stretch"
+                                  SelectionChanged="OnCompanySelected"/>
+                        <Button x:Name="AddCompanyButton"
+                                Grid.Column="1"
+                                Content="Add company"
+                                Click="OnAddCompany"/>
+                        <Button x:Name="ManageCompaniesButton"
+                                Grid.Column="2"
+                                Content="Manage Companies"
+                                Click="OnManageCompanies"/>
+                    </Grid>
+
+                    <InfoBar x:Name="StatusBar" IsOpen="False" Margin="0,0,0,6"/>
+
+                    <TextBlock x:Name="SharedHeader"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               Text="Shared details"/>
+                    <Grid x:Name="SharedGrid" ColumnSpacing="24" RowSpacing="10"/>
+                    <Grid x:Name="LanguageGrid" ColumnSpacing="24" RowSpacing="24"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,0">
+                        <TextBlock x:Name="VersionLabel"
+                                   VerticalAlignment="Center"
+                                   Opacity="0.6"/>
+                        <Button x:Name="CheckUpdateButton"
+                                Content="Check for updates"
+                                Click="OnCheckForUpdates"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Right: live preview of the result -->
+                <StackPanel x:Name="PreviewPanel" Grid.Column="1" Spacing="8">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Text="English version"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   VerticalAlignment="Center"/>
+                        <Button x:Name="CopyEnglishButton"
+                                Grid.Column="2"
+                                Content="Copy"
+                                Click="OnCopyEnglish"/>
+                    </Grid>
+                    <Border CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                        <Grid>
+                            <Image x:Name="EnglishWatermark"
+                                   Width="300"
+                                   Height="300"
+                                   Opacity="0.07"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"/>
+                            <ScrollViewer Height="440" VerticalScrollBarVisibility="Auto">
+                                <StackPanel x:Name="EnglishPreviewPanel" Spacing="10"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,20,0,0">
+                        <TextBlock Text="Arabic version — النسخة العربية"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   VerticalAlignment="Center"/>
+                        <Button x:Name="CopyArabicButton"
+                                Grid.Column="2"
+                                Content="Copy"
+                                Click="OnCopyArabic"/>
+                    </Grid>
+                    <Border CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                        <Grid>
+                            <Image x:Name="ArabicWatermark"
+                                   Width="300"
+                                   Height="300"
+                                   Opacity="0.07"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"/>
+                            <ScrollViewer Height="440" VerticalScrollBarVisibility="Auto">
+                                <StackPanel x:Name="ArabicPreviewPanel" Spacing="12"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

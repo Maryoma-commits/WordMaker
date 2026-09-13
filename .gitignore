@@ -1,0 +1,13 @@
+# Build output
+app/bin/
+app/obj/
+publish/
+publish-single/
+.staging/
+
+# The app binary is distributed via GitHub Releases, not committed
+*.exe
+
+# User data (company profiles) — per-user, never in the repo
+companies.json
+companies.json.migrated
